@@ -1,7 +1,15 @@
-import express, { Application, Request, Response } from "express";
+import express, {
+  Application,
+  NextFunction,
+  request,
+  Request,
+  Response,
+} from "express";
 import cors from "cors";
-import { userRoutes } from "./modules/User/user.routes";
-import { AdminRouter } from "./modules/Admin/admin.routes";
+import router from "./app/routes";
+import httpStatus from "http-status";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+
 const app: Application = express();
 
 app.use(express.json());
@@ -14,7 +22,28 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/admin", AdminRouter);
+app.use("/api/v1", router);
+
+/* app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+    success: false,
+    message: err.name || "Somthing went wrong!",
+    error: err,
+  });
+}); */
+
+app.use(globalErrorHandler);
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log(req);
+  res.status(httpStatus.NOT_FOUND).json({
+    success: false,
+    message: "API NOT FOUND",
+    error: {
+      path: req.originalUrl,
+      message: "your requested path is not found !",
+    },
+  });
+});
 
 export default app;
