@@ -29,6 +29,6 @@ const createAdminIntoDB = async (data: any) => {
   };
 };
 
-export const userService = {
+export const UserService = {
   createAdminIntoDB,
 };

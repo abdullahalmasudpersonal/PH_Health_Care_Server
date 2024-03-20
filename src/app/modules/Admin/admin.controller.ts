@@ -1,5 +1,5 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { adminService } from "./admin.service";
+import { Request, Response } from "express";
+import { AdminService } from "./admin.service";
 import { adminFilterableFields } from "./admin.constant";
 import pick from "../../../shared/pick";
 import sendResponse from "../../../shared/sendResponse";
@@ -11,7 +11,7 @@ const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, adminFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
   console.log(options);
-  const result = await adminService.getAllAdminFromDB(filters, options);
+  const result = await AdminService.getAllAdminFromDB(filters, options);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -23,7 +23,7 @@ const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const getSingleAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await adminService.getSingleAdminFromDB(id);
+  const result = await AdminService.getSingleAdminFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -34,7 +34,7 @@ const getSingleAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const updateSingleAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await adminService.updateSingleAdminIntoDB(id, req.body);
+  const result = await AdminService.updateSingleAdminIntoDB(id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -45,7 +45,7 @@ const updateSingleAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const deleteSingleAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await adminService.deleteSingleAdminIntoDB(id);
+  const result = await AdminService.deleteSingleAdminIntoDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -57,7 +57,7 @@ const deleteSingleAdmin = catchAsync(async (req: Request, res: Response) => {
 const softDeleteSingleAdmin = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await adminService.softDeleteSingleAdminIntoDB(id);
+    const result = await AdminService.softDeleteSingleAdminIntoDB(id);
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { userService } from "./user.service";
+import { UserService } from "./user.service";
 
 const createAdmin = async (req: Request, res: Response) => {
   try {
-    const result = await userService.createAdminIntoDB(req.body);
+    const result = await UserService.createAdminIntoDB(req.body);
     // console.log(req.body);
     res.status(200).json({
       success: true,
@@ -19,6 +19,6 @@ const createAdmin = async (req: Request, res: Response) => {
   }
 };
 
-export const userController = {
+export const UserController = {
   createAdmin,
 };
