@@ -1,15 +1,14 @@
 import prisma from "../../../shared/prisma";
 import * as bcrypt from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import { UserStatus } from "@prisma/client";
+import config from "../../../config";
 
 const loginUserFromDB = async (payload: {
   email: string;
   password: string;
 }) => {
-  console.log("user loged in...", payload);
-
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
@@ -32,8 +31,8 @@ const loginUserFromDB = async (payload: {
       email: userData.email,
       role: userData.role,
     },
-    "abcdefg563jkljh",
-    "5m"
+    config.jwt.jwt_secret as Secret,
+    config.jwt.EXPIRES_IN as string
   );
 
   const refreshToken = jwtHelpers.generateToken(
@@ -42,8 +41,8 @@ const loginUserFromDB = async (payload: {
       email: userData.email,
       role: userData.role,
     },
-    "a52bcde54kjlfg",
-    "30d"
+    config.jwt.refresh_token_secret as Secret,
+    config.jwt.refresh_token_expires_in as string
   );
 
   return {
@@ -56,7 +55,10 @@ const loginUserFromDB = async (payload: {
 const refreshTokenFromDB = async (token: string) => {
   let decodedData;
   try {
-    decodedData = jwtHelpers.verifyToken(token, "a52bcde54kjlfg");
+    decodedData = jwtHelpers.verifyToken(
+      token,
+      config.jwt.refresh_token_secret as Secret
+    );
   } catch (err) {
     throw new Error("You are not authorized!!!");
   }
@@ -74,8 +76,8 @@ const refreshTokenFromDB = async (token: string) => {
       email: userData.email,
       role: userData.role,
     },
-    "abcdefg563jkljh",
-    "5m"
+    config.jwt.jwt_secret as Secret,
+    config.jwt.refresh_token_expires_in as string
   );
 
   return {
@@ -84,7 +86,16 @@ const refreshTokenFromDB = async (token: string) => {
   };
 };
 
+const changePasswordIntoDB = async (user: any, payload: any) => {
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user.email,
+    },
+  });
+};
+
 export const AuthServices = {
   loginUserFromDB,
   refreshTokenFromDB,
+  changePasswordIntoDB,
 };
