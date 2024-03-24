@@ -33,7 +33,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Loged in successfully",
+    message: "Access token generated successfully",
     data: result,
     // data: {
     //   accessToken: result.accessToken,
@@ -42,25 +42,52 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const changePassword = catchAsync(async (req: Request, res: Response) => {
-  // console.log(req.user, req.body);
-  const user = req.user;
-  const result = await AuthServices.changePasswordIntoDB(user, req.body);
+const changePassword = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    // console.log(req.user, req.body);
+    const user = req.user;
+    const result = await AuthServices.changePasswordIntoDB(user, req.body);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Loged in successfully",
-    data: result,
-    // data: {
-    //   accessToken: result.accessToken,
-    //   needPasswordChange: result.needPasswordChange,
-    // },
-  });
-});
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Password change successfully!",
+      data: result,
+    });
+  }
+);
+
+const forgotPassword = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    await AuthServices.forgotPasswordIntoDB(req.body);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Check your email!",
+      data: null,
+    });
+  }
+);
+
+const resetPassword = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const token = req.headers.authorization || "";
+    await AuthServices.resetPasswordIntoDB(token, req.body);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "New password set successfully!",
+      data: null,
+    });
+  }
+);
 
 export const AuthController = {
   loginUser,
   refreshToken,
   changePassword,
+  forgotPassword,
+  resetPassword,
 };
