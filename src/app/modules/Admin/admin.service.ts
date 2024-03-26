@@ -52,7 +52,7 @@ const getAllAdminFromDB = async (
             [options.sortBy]: options.sortOrder,
           }
         : {
-            createdAd: "desc",
+            createdAt: "desc",
           },
   });
 
