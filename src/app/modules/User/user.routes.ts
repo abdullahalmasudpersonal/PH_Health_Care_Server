@@ -9,15 +9,8 @@ const router = express.Router();
 
 router.get(
   "/",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   UserController.getAllUser
-  /*   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-  fileUploader.upload.single("file"),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = userValidatain.createAdminValidation.parse(
-      JSON.parse(req.body.data)
-    );
-    return UserController.createAdmin(req, res, next);
-  } */
 );
 
 router.post(
@@ -53,6 +46,12 @@ router.post(
     );
     return UserController.createPatient(req, res, next);
   }
+);
+
+router.patch(
+  "/:id/status",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  UserController.changeProfileStatus
 );
 
 export const UserRoutes = router;
