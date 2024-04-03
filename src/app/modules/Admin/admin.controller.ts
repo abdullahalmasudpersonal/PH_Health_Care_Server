@@ -7,7 +7,6 @@ import httpStatus from "http-status";
 import catchAsync from "../../../shared/catchAsync";
 
 const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
-  // console.log(req.query);
   const filters = pick(req.query, adminFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
   console.log(options);

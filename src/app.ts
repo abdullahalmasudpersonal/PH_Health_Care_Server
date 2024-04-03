@@ -1,10 +1,4 @@
-import express, {
-  Application,
-  NextFunction,
-  request,
-  Request,
-  Response,
-} from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import router from "./app/routes";
 import httpStatus from "http-status";
@@ -27,18 +21,9 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/v1", router);
 
-/* app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-    success: false,
-    message: err.name || "Somthing went wrong!",
-    error: err,
-  });
-}); */
-
 app.use(globalErrorHandler);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(req);
   res.status(httpStatus.NOT_FOUND).json({
     success: false,
     message: "API NOT FOUND",
