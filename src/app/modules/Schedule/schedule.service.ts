@@ -172,7 +172,29 @@ const getAllScheduleFromDB = async (
   };
 };
 
+const getSingleScheduleIntoDB = async (
+  id: string
+): Promise<Schedule | null> => {
+  const result = await prisma.schedule.findUnique({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+
+const deleteSingleScheduleFromDB = async (id: string): Promise<Schedule> => {
+  const result = await prisma.schedule.delete({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+
 export const ScheduleServices = {
   createScheduleIntoDB,
   getAllScheduleFromDB,
+  getSingleScheduleIntoDB,
+  deleteSingleScheduleFromDB,
 };
