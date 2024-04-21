@@ -43,6 +43,8 @@ model Patient {
   patientHealthData PatientHealthData?
   medicalReport     MedicalReport[]
   appointment       Appointment[]
+  prescription      Prescription[]
+  review            Review[]
 
   @@map("patients")
 }
@@ -82,6 +84,8 @@ model Doctor {
   doctorSpecialties   DoctorSpecialties[]
   doctorSchedules     DoctorSchedule[]
   appointment         Appointment[]
+  prescription        Prescription[]
+  review              Review[]
 
   @@map("doctors")
 }
@@ -192,10 +196,11 @@ model Appointment {
   notes          String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
-  // prescription   Prescription?
   //review         Review?
   doctorSchedule DoctorSchedule?
   payment        Payment?
+  prescription   Prescription?
+  review         Review?
 
   @@map("appointments")
 }
@@ -208,8 +213,48 @@ model Payment {
   transactionId      String        @unique
   status             PaymentStatus @default(UNPAID)
   paymentGatewayData Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 
   @@map("payments")
+}
+
+model Prescription {
+  id       String @id @default(uuid())
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+
+  followUpDate DateTime?
+  instructions String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("prescriptions")
+}
+
+model Review {
+  id       String @id @default(uuid())
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+
+  rating    Float
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reviews")
 }
 
 enum UserRole {
