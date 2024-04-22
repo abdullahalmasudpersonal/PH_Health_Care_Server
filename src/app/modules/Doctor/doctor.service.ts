@@ -4,6 +4,8 @@ import { IDoctorFilterRequest } from "./doctor.interface";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { doctorSearchableFields } from "./doctor.constant";
+import ApiError from "../../errors/ApiError";
+import httpStatus from "http-status";
 
 const getAllDoctorIntoDB = async (
   filters: IDoctorFilterRequest,
@@ -112,14 +114,21 @@ const getSingleDoctorIntoDB = async (id: string): Promise<Doctor | null> => {
   return result;
 };
 
-const updateDoctorIntoDB = async (id: string, payload: any) => {
+const updateDoctorIntoDB = async (id: string, payload: any, user: any) => {
   const { specialties, ...doctorData } = payload;
 
   const doctorInfo = await prisma.doctor.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
+
+  /*   if (user.email === !doctorInfo.email) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!!!");
+  } */
+
+  console.log("userEmail", user?.email, "requestEmail", doctorInfo.email);
 
   await prisma.$transaction(async (transactionClent) => {
     await transactionClent.doctor.update({

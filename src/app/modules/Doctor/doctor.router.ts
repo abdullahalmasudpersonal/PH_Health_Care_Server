@@ -15,7 +15,7 @@ router.get("/:id", DoctorController.getSingleDoctor);
 
 router.patch(
   "/:id",
-  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+  auth(UserRole.DOCTOR),
   validateRequest(DoctorValidation.update),
   DoctorController.updateDoctor
 );

@@ -5,6 +5,7 @@ import catchAsync from "../../../shared/catchAsync";
 import { DoctorService } from "./doctor.service";
 import pick from "../../../shared/pick";
 import { doctorFilterableFields } from "./doctor.constant";
+import { IAuthUser } from "../../interfaces/common";
 
 const getAllDoctor = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, doctorFilterableFields);
@@ -30,16 +31,21 @@ const getSingleDoctor = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateDoctor = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await DoctorService.updateDoctorIntoDB(id, req.body);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Doctor updated successfully",
-    data: result,
-  });
-});
+const updateDoctor = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const { id } = req.params;
+    const user = req.user;
+
+    //    console.log("userid", user?.email, "requestid", id);
+    const result = await DoctorService.updateDoctorIntoDB(id, req.body, user);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Doctor updated successfully",
+      data: result,
+    });
+  }
+);
 
 const deleteDoctor = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
