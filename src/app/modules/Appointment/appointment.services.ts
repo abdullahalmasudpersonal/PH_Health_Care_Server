@@ -290,7 +290,7 @@ const updateAppointmentStatusIntoDB = async (
 const cancelUnpaidAppointment = async () => {
   ///
 
-  const thrityMinAgo = new Date(Date.now() - 2 * 60 * 1000);
+  const thrityMinAgo = new Date(Date.now() - 30 * 60 * 1000);
 
   const unPaidAppointments = await prisma.appointment.findMany({
     where: {
@@ -322,7 +322,7 @@ const cancelUnpaidAppointment = async () => {
       },
     });
 
-    await tx.doctorSchedule.updateMany({
+    /*     await tx.doctorSchedule.updateMany({
       where: {
         appointmentId: {
           in: appointmentIdsToCancel,
@@ -331,10 +331,22 @@ const cancelUnpaidAppointment = async () => {
       data: {
         isBooked: false,
       },
-    });
+    }); */
+
+    for (const unPaidAppointment of unPaidAppointments) {
+      await tx.doctorSchedule.updateMany({
+        where: {
+          doctorId: unPaidAppointment.doctorId,
+          scheduleId: unPaidAppointment.scheduleId,
+        },
+        data: {
+          isBooked: false,
+        },
+      });
+    }
   });
 
-  console.log("cancel", appointmentIdsToCancel);
+  console.log("updated", appointmentIdsToCancel);
 };
 
 export const AppointmentServices = {
