@@ -4,6 +4,7 @@ import router from "./app/routes";
 import httpStatus from "http-status";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import cookieParser from "cookie-parser";
+import { AppointmentServices } from "./app/modules/Appointment/appointment.services";
 
 const app: Application = express();
 app.use(cors());
@@ -12,6 +13,8 @@ app.use(cookieParser());
 /// parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+AppointmentServices.cancelUnpaidAppointment();
 
 app.get("/", (req: Request, res: Response) => {
   res.send({
