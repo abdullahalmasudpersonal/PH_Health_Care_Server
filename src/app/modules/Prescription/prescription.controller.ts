@@ -4,6 +4,7 @@ import { PrescriptionServices } from "./prescription.services";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import { IAuthUser } from "../../interfaces/common";
+import pick from "../../../shared/pick";
 
 const createPrescription = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
@@ -16,12 +17,32 @@ const createPrescription = catchAsync(
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Update appointment status successfully",
+      message: "Create prescription successfully",
       data: result,
+    });
+  }
+);
+
+const getMyPrescription = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    const user = req.user;
+    const result = await PrescriptionServices.getMyPrescriptionIntoDB(
+      user as IAuthUser,
+      options
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Get my prescription successfully",
+      meta: result.meta,
+      data: result.data,
     });
   }
 );
 
 export const PrescriptionController = {
   createPrescription,
+  getMyPrescription,
 };
